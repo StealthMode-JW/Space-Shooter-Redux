@@ -12,20 +12,6 @@ public class Pulsing : MonoBehaviour
     public float maxAlpha = 1.0f;
     public float minAlpha = 0.0f;
 
-    // Update is called once per frame
-
-    private void Start()
-    {
-        /*if (isPulsing)
-        {
-            if (cg != null)
-            {
-                cg.alpha = minAlpha;
-                StartCoroutine(Pulse());
-            }
-        }*/
-        
-    }
     private void OnEnable()
     {
         if (isPulsing)
@@ -37,13 +23,7 @@ public class Pulsing : MonoBehaviour
             }
         }
     }
-    void Update()
-    {
-        /*if (isPulsing)
-        {
-
-        }*/
-    }
+    
     public IEnumerator Pulse()
     {
         yield return new WaitForSeconds(delay * 3);
