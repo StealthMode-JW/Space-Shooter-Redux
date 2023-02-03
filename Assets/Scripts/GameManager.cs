@@ -114,7 +114,7 @@ public class GameManager : MonoBehaviour
             if (!isGamePaused && _canPause)
             {
                 if (Input.GetKeyDown(KeyCode.Escape))
-                    StartCoroutine(PauseGame(true));
+                    PauseGame(true);
                 
 
             }
@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
     //public float testVal = 0.1f;
     public float sliderVal;
     public float timeScale = 1.0f;
-    IEnumerator PauseGame(bool doPause)
+    void PauseGame(bool doPause)
     {
         isGamePaused = doPause;
         _canPause = !doPause;
@@ -199,21 +199,9 @@ public class GameManager : MonoBehaviour
         else
             Time.timeScale = 1.0f;
         ActivateQuitMenu(doPause);
-        yield return null;
+        
 
-        /*float elapsedTime = 0.0f;
-        float targetTimeScale = 0.0f;
-        float timeTilPaused = 1.0f;
-        while(elapsedTime < timeTilPaused)
-        {
-            yield return null;
-            elapsedTime += Time.unscaledDeltaTime;
-            timeScale = 1 - Mathf.Clamp01(elapsedTime / timeTilPaused);
-            //may need to make sure its not completely at 0 for function to work.
-            Time.timeScale = timeScale;
-        }
-        ActivateQuitMenu();
-        Time.timeScale = targetTimeScale;*/
+        
     }
 
     void ActivateQuitMenu(bool doActivate)
@@ -252,7 +240,7 @@ public class GameManager : MonoBehaviour
             _rect_PlayerUI.anchoredPosition = newVector2;
         }
 
-        StartCoroutine(PauseGame(false));
+        PauseGame(false);
     }
 
     public void OnMainMenuButtonPress()    //On-Click Button (Canvas / Quit_Menu / MainMenu_Button
@@ -311,10 +299,12 @@ public class GameManager : MonoBehaviour
             
             anim.enabled = true;
             anim.Play("ExplosionUI");
-
+            yield return new WaitForSecondsRealtime(0.5f);
+            Image playerImg = _playerUI_GO.GetComponent<Image>();
+            playerImg.enabled = false;
             //  Now quit application after 1 second.
-            yield return new WaitForSeconds(1.0f);
-            _playerUI_GO.SetActive(false);
+            yield return new WaitForSecondsRealtime(0.5f);
+            
             Quit();
         }
         
