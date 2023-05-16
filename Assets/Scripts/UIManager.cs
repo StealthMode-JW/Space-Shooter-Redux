@@ -232,6 +232,42 @@ public class UIManager : MonoBehaviour
 
     
 
+    public void SwapLivesSprite(int spriteIndex)
+    {
+        _livesImg.sprite = _livesSprite[spriteIndex];
+    }
+
+    /*public IEnumerator MoveShipUI_Routine(RectTransform rt_ShipUI, CanvasGroup cg_ShipUI, int spriteIndex, Vector2 startPos, Vector2 endPos, float timeToMove)
+    {
+        
+        float t = 0;
+        while (t < 1)
+        {
+            t += Time.deltaTime / timeToMove;
+
+            // Fade in the CanvasGroup
+            if (t < 0.5f)
+            {
+                cg_ShipUI.alpha = t * 2; // This will reach 1 when t is 0.5
+            }
+
+            // Use Lerp to smoothly transition from the start position to the end position
+            rt_ShipUI.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+
+            yield return null;
+        }
+        _livesImg.sprite = _livesSprite[spriteIndex];
+        yield return new WaitForSeconds(0.1f);
+        Reset_ShipUIs(rt_ShipUI, cg_ShipUI, startPos);
+    }
+
+    public void Reset_ShipUIs(RectTransform rt_ShipUI, CanvasGroup cg_ShipUI, Vector2 startPos)
+    {
+        rt_ShipUI.anchoredPosition = startPos;
+        cg_ShipUI.alpha = 0f;
+    }
+*/
+
     IEnumerator DisplayRestartText()
     {
         yield return new WaitForSeconds(2.5f);

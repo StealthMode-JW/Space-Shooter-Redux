@@ -29,8 +29,6 @@ public class Pulsing : MonoBehaviour
         yield return new WaitForSeconds(delay * 3);
         while(isPulsing && cg != null)
         {
-
-            
             for (float t = 0f; t < duration; t += Time.deltaTime)
             {
                 float normalizedTime = t/duration;
@@ -50,20 +48,6 @@ public class Pulsing : MonoBehaviour
             }
             cg.alpha = minAlpha;
             yield return new WaitForSeconds(delay * 3);
-
-
-            /*for(float i = minAlpha; i < maxAlpha; i += Time.deltaTime)
-            {
-                cg.alpha = i;
-                yield return null;
-            }
-            yield return new WaitForSeconds(delay);
-            for(float j = maxAlpha; j > minAlpha; j -= Time.deltaTime)
-            {
-                cg.alpha = j;
-                yield return null;
-            }
-            yield return new WaitForSeconds(delay);*/
         }
     }
 }

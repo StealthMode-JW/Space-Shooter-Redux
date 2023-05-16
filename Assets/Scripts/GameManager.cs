@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        #region irrelevant logic
         if (!isGamePaused)
         {
             if (Input.GetKeyDown(KeyCode.R) && _isGameOver && _isReloadingScene == false)
@@ -108,26 +109,24 @@ public class GameManager : MonoBehaviour
                     SceneManager.LoadScene("Game");
             }
         }
-        
+        #endregion
+
         if(_didQuit == false)
         {
             if (!isGamePaused && _canPause)
             {
                 if (Input.GetKeyDown(KeyCode.Escape))
                     PauseGame(true);
-                
-
             }
+
             else if (isGamePaused && _isQuitMenuActivated)
             {
-
                 if (Input.GetKeyDown(KeyCode.Space))
                     StartCoroutine(ReturnToGameRoutine());
                 else if(Input.GetKeyDown(KeyCode.Return))
                     GoToMainMenu();
-                else if (Input.GetKey(KeyCode.Escape))   //  if holding ESC key
+                else if (Input.GetKey(KeyCode.Escape))   //if holding ESC key
                 {
-                    sliderVal = quit_Slider.value;
                     if (!quit_Slider.isActiveAndEnabled)
                     {
                         quit_Slider.gameObject.SetActive(true);
@@ -137,34 +136,28 @@ public class GameManager : MonoBehaviour
                     }
                     sliderVal = quit_Slider.value;
                     _isPressingQuit = true;
-                    //testDeltaVal += Time.deltaTime * _sliderSpeed;
-                   // testVal += Time.unscaledDeltaTime * _sliderSpeed;
                     sliderVal += Time.unscaledDeltaTime * _sliderSpeed;
                     if(sliderVal > 1.0f)
                         sliderVal = 1.0f;
                     quit_Slider.value = sliderVal;
                     
-                    if(quit_Slider.value >= 1.0f)
+                    if(quit_Slider.value >= 1.0f)   //if holding ESC key
                     {
                         _didQuit = true;
                         StartCoroutine(QuitRoutine(true));
                     }
                 }
                 else
-                {                                   //  When releasing ESC key
-                    
+                {                                   //When releasing ESC key
                     _isPressingQuit = false;
                     
                     if (quit_Slider.value > 0.0f)
                     {
                         _isReleasingQuit = true;
-                       // testDeltaVal -= Time.deltaTime * _sliderSpeed;
-                       // testVal -= Time.unscaledDeltaTime * _sliderSpeed;
                         sliderVal -= Time.unscaledDeltaTime * _sliderSpeed;
                         if (sliderVal <= 0.0f)
                             sliderVal = 0.0f;
                         quit_Slider.value = sliderVal;
-                        
                     }
 
                     if (quit_Slider.value <= 0.0f)
@@ -173,23 +166,19 @@ public class GameManager : MonoBehaviour
                         _hasQuitReset = true;
                         if (quit_Slider.isActiveAndEnabled)
                         {
-                            
                             quit_Slider.enabled = false;
                             quit_Slider.gameObject.SetActive(false);
                         }
-                            
                     }
-
-                    
                 }
             }
         }
-        
     }
     //public float testDeltaVal = 0.1f;
     //public float testVal = 0.1f;
     public float sliderVal;
     public float timeScale = 1.0f;
+
     void PauseGame(bool doPause)
     {
         isGamePaused = doPause;
@@ -199,24 +188,17 @@ public class GameManager : MonoBehaviour
         else
             Time.timeScale = 1.0f;
         ActivateQuitMenu(doPause);
-        
-
-        
     }
 
     void ActivateQuitMenu(bool doActivate)
     {
-        
         _quitMenu.SetActive(doActivate);
         _isQuitMenuActivated = doActivate;
         _rect_PlayerUI.anchoredPosition = _startingPos_PlayerUI;
         _thrusterUI_GO.SetActive(false);
     }
-    public void OnQuitButtonPress()     //On-Click Button (Canvas / Quit_Menu / Quit_Button
-    {
-        _didQuit = true;
-        StartCoroutine(QuitRoutine(false));
-    }
+
+    
 
     public void OnSpaceButtonPress()    //On-Click Button (Canvas / Quit_Menu / BackToSpace_Button
     {
@@ -253,16 +235,20 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1.0f;
         SceneManager.LoadScene("MainMenu");
     }
+    
+    public void OnQuitButtonPress()     //On-Click Button (Canvas / Quit_Menu / Quit_Button)
+    {
+        _didQuit = true;
+        StartCoroutine(QuitRoutine(false));
+    }
 
     int countQuits = 0;
     IEnumerator QuitRoutine(bool _didManuallySlide)
     {
-        
         if(countQuits < 1)
         {
-            
             countQuits++;
-            // _didManuallySlide == true, skip the animation to make slider go up
+            // _didManuallySlide == true, skip animation to make slider go up
             //  otherwise, that means they press the Yes, Quit button
             //      so animate the laser going across to destroy the ship
             if (_didManuallySlide == false && _isQuitMenuActivated)
@@ -307,8 +293,6 @@ public class GameManager : MonoBehaviour
             
             Quit();
         }
-        
-
     }
     private void Quit()
     {

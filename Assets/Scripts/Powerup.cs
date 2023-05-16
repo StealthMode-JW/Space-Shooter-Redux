@@ -8,7 +8,7 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     float _speed = 3.0f;
     
-    [SerializeField]    //0 = TripleShot    //1 = Speed     //2 = Shields    //3 = Phasing?
+    [SerializeField]  //0 = TripleShot  //1 = Speed  //2 = Shields   //3 = Ammo  //4 = Health
     int _powerupID;
 
     [SerializeField]
@@ -48,6 +48,7 @@ public class Powerup : MonoBehaviour
             if(player != null)
             {
                 player.ActivatePowerup(_powerupID);
+                
                 if(List_PowerupClips != null && List_PowerupClips.Count > 0)
                 {
                     int ranIndex = Random.Range(0, List_PowerupClips.Count);
