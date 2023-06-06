@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1150240414762501584}
+  - component: {fileID: 1336429753430918949}
   m_Layer: 0
   m_Name: DualShot_Enemy
   m_TagString: Untagged
@@ -33,6 +34,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1336429753430918949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 445594765077606165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03614db416e383248bce07d6bde8454c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyAfterTime: 1
+  destroyCon_AfterTime:
+    duration: 10
+  destroyByLocation: 0
+  destroyIfObjectNull: 1
+  destroyCon_IfObjectNull:
+    ifANY_OfThese_ChildObjects: 1
+    anyChildObjects:
+    - isDestroyed: 0
+      indexOfChild: 0
+      childObject: {fileID: 0}
+    ifALL_OfThese_ChildObjects: 0
+    allChildObjects: []
 --- !u!1 &1737478945852287194
 GameObject:
   m_ObjectHideFlags: 0

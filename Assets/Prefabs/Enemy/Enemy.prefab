@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 6260082643037712545}
   - component: {fileID: -5059986275363359271}
   - component: {fileID: 4086224995632706933}
+  - component: {fileID: 3519916220932373551}
   - component: {fileID: 2418222296866895652}
   - component: {fileID: 1847599301682818151}
   - component: {fileID: 6281113909430307701}
@@ -189,12 +190,14 @@ MonoBehaviour:
   xPosSpawnMin: -9
   xPosSpawnMax: 9
   _destroyedTransform: {fileID: 0}
+  _damageFragments: {fileID: 3519916220932373551}
   _minDestroyedSpeedMultiplier: 0.5
   _maxDestroyedSpeedMultiplier: 1.25
   _isDead: 0
   _isRecycling: 0
   _canFire: 1
   _dualShotPrefab: {fileID: 445594765077606165, guid: 9b587474502ae5c46be7945c38dec6b7, type: 3}
+  _laserContainer: {fileID: 0}
   _timeTilNextFire: 0
   _minTimeTilNextFire: 3
   _maxTimeTilNextFire: 7
@@ -270,6 +273,29 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3519916220932373551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2472294146597078675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d02565e39151234f9c4f476c9bebe04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fragments:
+  - {fileID: 5071158959973501522, guid: ce2302de3ee3297419a66ea10ee36cbc, type: 3}
+  - {fileID: 3591420022898845218, guid: 6d55b621f0991e44ca1286ac498ef071, type: 3}
+  - {fileID: 8366810096379600556, guid: 059b8372d145e274e8a49db9d4d36599, type: 3}
+  - {fileID: 2966325278474703692, guid: 8bf87180acb5f7843a01caa32b1483ea, type: 3}
+  - {fileID: 556712545433310080, guid: 52aaec1ca0a5baf4ca23e705d9d9529a, type: 3}
+  - {fileID: 6779694960199650843, guid: aed3c5ff582097f47976140a1c32610f, type: 3}
+  - {fileID: 6631232049923451736, guid: 119fa65e094905e41b68952c0cc92012, type: 3}
+  - {fileID: 7535484378379065581, guid: 3412aa048532cdb48b689dbad3c48a4a, type: 3}
+  - {fileID: 538289013759567994, guid: 6ce2f3d15c1cb8e4eaf85fdfdda61090, type: 3}
+  - {fileID: 4164683895625501109, guid: bee458877d9438441bd30ece9741c802, type: 3}
 --- !u!61 &2418222296866895652
 BoxCollider2D:
   m_ObjectHideFlags: 0

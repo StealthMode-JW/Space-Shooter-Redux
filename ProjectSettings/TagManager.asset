@@ -9,6 +9,8 @@ TagManager:
   - Powerup
   - Container
   - Asteroid
+  - Missile
+  - Explosion
   layers:
   - Default
   - TransparentFX

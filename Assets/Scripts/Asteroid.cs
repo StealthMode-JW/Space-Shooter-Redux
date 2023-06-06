@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 //using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Asteroid : MonoBehaviour
@@ -20,6 +21,14 @@ public class Asteroid : MonoBehaviour
 
     [SerializeField]
     GameObject _explosionPrefab;
+    [SerializeField]
+    Transform _transPlayer;
+
+    [SerializeField]
+    bool _didSplitAlready = false;
+
+    [SerializeField]
+    CameraShake _cameraShake;
     
     
     // Start is called before the first frame update
@@ -86,27 +95,53 @@ public class Asteroid : MonoBehaviour
         {
             Player player = other.transform.GetComponent<Player>();
             if (player != null)
-                player.Damage();
+                player.Damage(gameObject, 1);
 
             DestroySelf();
         }
         else if(other.tag == "Enemy")
         {
             //Enemy will destroy itself
-            Debug.Log("ASTEROID: OnTriggerEnter2D() Hit Enemy ");
+            DestroySelf();
+        }
+        else if (other.tag == "Missile")
+        {
+            //Should I do anything here?
             DestroySelf();
         }
         else if(other.tag == "Asteroid")
         {
+            //Should I do anything here? Split them off?
+        }
+        else if (other.tag == "Explosion")
+        {
             //Should I do anything here?
+            DestroySelf();
         }
     }
+
+    //  When Asteroid explodes...
     void DestroySelf()
     {
-        GameObject newExplosion = Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        //  Only grab components if being destroyed
+        if (_cameraShake == null)
+            _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+        if (_transPlayer == null)
+            _transPlayer = GameObject.Find("Player").transform;
+        if(_transPlayer != null && _cameraShake != null)
+        {
+            //  duration and magnitude increase the larger the asteroid
+            float dur = transform.localScale.x * 0.25f;
+            float mag = dur;
+            
+            Vector3 playerPos = _transPlayer.position;
+            _cameraShake.StartDynamicShake(dur, mag, playerPos, transform.position);
+        }
+        //  Explosion sizes are relative to size of Asteroid.
+        GameObject newExplosion = 
+            Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
         Vector3 myScale = transform.localScale;
         newExplosion.transform.localScale = myScale;
         Destroy(gameObject, 0.1f);
     }
-
 }

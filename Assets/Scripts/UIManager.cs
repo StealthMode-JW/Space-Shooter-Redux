@@ -80,13 +80,16 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLives(int currentLives)
     {
-        if(currentLives >= 0)
-        {
-            _livesImg.sprite = _livesSprite[currentLives];
+        if (currentLives < 0)
+            currentLives = 0;
+        if(currentLives > _livesSprite.Length)
+            Debug.LogWarning("CURRENT LIVES >> " + currentLives + " << is showing a higher value than LIVES SPRITE LENGTH >> " + _livesSprite.Length + " <<");
+       
+        _livesImg.sprite = _livesSprite[currentLives];
 
-            if (currentLives <= 0)
-                GameOverSequence();
-        }
+        if (currentLives <= 0)
+            GameOverSequence();
+        
         
     }
 

@@ -10,15 +10,25 @@ using TMPro;
 using UnityEngine.UI;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using static HeatSeekingMissile;
+using Unity.VisualScripting;
+using System.Net;
+using TMPro.SpriteAssetUtilities;
 
 public class Player : MonoBehaviour
 {
+    
+    
     [SerializeField]
     SpawnManager _spawnManager;
     [SerializeField]
     UIManager _uiManager;
     [SerializeField] 
     ThrusterController _thrusterController;
+    [SerializeField]
+    DamageFragments _damageFragments;
+    [SerializeField]
+    CameraShake _cameraShake;
 
 
     [SerializeField]
@@ -131,6 +141,8 @@ public class Player : MonoBehaviour
     GameObject _shieldVisualizer;
     [SerializeField]
     SpriteRenderer _shieldSprite;
+    [SerializeField]
+    ParticleSystem _shieldExplosionEffect;
 
     [SerializeField]
     int _shieldLife = 0;
@@ -198,6 +210,65 @@ public class Player : MonoBehaviour
     [SerializeField]
     List<AudioClip> List_FailedLaserSounds = new List<AudioClip>();
 
+
+    [Header("MISSILES")]
+
+    [SerializeField]
+    GameObject _heatseekerPrefab;
+
+    [SerializeField]
+    bool _canMissilesHurtSelf = false;
+    [SerializeField]
+    bool _canFireMissiles = false;
+    
+    [SerializeField]
+    float _timeToReadyMissiles = 0.75f;
+    
+    Vector2 _startPosLeftMissile = new Vector2(-0.5f, -0.3f);
+    Vector2 _startPosRightMissile = new Vector2(0.5f, -0.3f);
+    Vector2 _readyPosLeftMissile = new Vector2(-1f, -0.3f);
+    Vector2 _readyPosRightMissile = new Vector2(1f, -0.3f);
+
+    GameObject _currentLeftMissile;
+    GameObject _currentRightMissile;
+
+
+
+    #region more complex heatseeker variable list
+    /*[Header("MISSILES")]
+    [SerializeField]
+    GameObject _heatseekerPrefab;
+
+    [SerializeField]
+    bool _canMissilesHurtSelf = false;
+    [SerializeField]
+    bool _canMissilesAutoRefresh = false;
+    [SerializeField]
+    bool _canMissilesStack = false;
+    [SerializeField]
+    bool _hasMissiles = false;
+    [SerializeField]
+    bool _canFireMissiles = false;
+    [SerializeField]
+    bool _willReloadMissiles = false;
+
+    [SerializeField]
+    float _durationForMissiles = 5.0f;
+    [SerializeField]
+    float _timeBetweenMissiles = 1.5f;
+    [SerializeField]
+    float _timeToReadyMissiles = 0.75f;
+
+    Vector2 _startPosLeftMissile = new Vector2(-0.5f, -0.3f);
+    Vector2 _startPosRightMissile = new Vector2(0.5f, -0.3f);
+    Vector2 _readyPosLeftMissile = new Vector2(-1f, -0.3f);
+    Vector2 _readyPosRightMissile = new Vector2(1f, -0.3f);
+
+    GameObject _currentLeftMissile;
+    GameObject _currentRightMissile;*/
+
+    #endregion
+
     private void Start()
     {
         if(_audioSource1 == null)
@@ -239,13 +310,16 @@ public class Player : MonoBehaviour
             Reset_ShipUIs(_trans_ShipUI_2, _sprite_Ship2, _startPos2);
         }
 
+        if (_damageFragments == null)
+            _damageFragments = GetComponent<DamageFragments>();
 
-
-            /*if (_rect_ShipUI_1 != null && _cg_ShipUI1 != null)
-                _uiManager.Reset_ShipUIs(_rect_ShipUI_1, _cg_ShipUI1, _startPos1);
-            if (_rect_ShipUI_2 != null && _cg_ShipUI2 != null)
-                _uiManager.Reset_ShipUIs(_rect_ShipUI_2, _cg_ShipUI2, _startPos2);*/
-        
+        /*if (_rect_ShipUI_1 != null && _cg_ShipUI1 != null)
+            _uiManager.Reset_ShipUIs(_rect_ShipUI_1, _cg_ShipUI1, _startPos1);
+        if (_rect_ShipUI_2 != null && _cg_ShipUI2 != null)
+            _uiManager.Reset_ShipUIs(_rect_ShipUI_2, _cg_ShipUI2, _startPos2);*/
+        if(_cameraShake == null)
+            _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
+       
 
     }
 
@@ -261,36 +335,18 @@ public class Player : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
                     FireLaser();
 
+                if (HasMissiles() && _canFireMissiles)
+                    if(Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(1))
+                        LaunchHeatSeekers();
+                    
+                
+
                 UpdateShieldVisuals();
-
-               
-                
-                
-                
-                
-                /*else if (Input.GetKeyDown(KeyCode.LeftControl))
-                {
-                    if (Time.time > _canFireSpread)
-                        FireSpread();
-                    else
-                        Malfunction();
-                }*/
-
-
-
-                /*if (!_isInvulnerable)
-                {
-                    float pulse = Mathf.Sin(Time.time * _steadyPulseSpeed) * 0.5f + 0.5f;
-                    _shieldsLight.intensity = Mathf.Lerp(_minPulseIntensity, _maxPulseIntensity, pulse);
-                }*/
-
             }
-
-
         }
-
-
     }
+    //StartCoroutine(LaunchHeatSeekersRoutine());
+
     void CalculateMovement()
     {
         float hor = Input.GetAxis("Horizontal");
@@ -303,14 +359,7 @@ public class Player : MonoBehaviour
         if (_thrusterController.IsThrusterPlaying())
             finalSpeed *= _thrusterSpeedBoost;
         
-       
         transform.Translate(direction * finalSpeed * Time.deltaTime);
-        
-
-        /*if (_isSpeedEnabled)
-            transform.Translate(direction * _speed * _speedBoost * Time.deltaTime);
-        else
-            transform.Translate(direction * _speed * Time.deltaTime);*/
 
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.8f, 0), 0);
 
@@ -391,10 +440,11 @@ public class Player : MonoBehaviour
             else
             {
                 _ammoCount--;
-                
-                GameObject newLaser = Instantiate(_laserPrefab, pos, 
-                    Quaternion.identity);
-                newLaser.transform.parent = _laserContainer;
+
+                Instantiate(_laserPrefab, pos, Quaternion.identity, _laserContainer);
+                /*GameObject newLaser = Instantiate(_laserPrefab, pos, 
+                    Quaternion.identity, _laserContainer);*/
+                //newLaser.transform.parent = _laserContainer;
 
                 int ranIndex = Random.Range(0, List_LaserFireSounds.Count);
                 ranClip = List_LaserFireSounds[ranIndex];
@@ -456,24 +506,42 @@ public class Player : MonoBehaviour
 
 
     
-    public void Damage()
+    public void Damage(GameObject dmgGO, int dmgAmount)
     {
+        //  Check the tags for who damaged us for special interactions
+        //      "Enemy" "Laser" "Asteroid"  "Missile"
+        
         if (_isInvulnerable)
             return;
 
+        if(dmgGO.tag == "Missile")
+        {
+            if (_canMissilesHurtSelf == false) //   Set in Editor
+                return;
+        } 
+
         if (_shieldLife > 0)
         {
-            StartCoroutine(ShieldHit());
-            return;
+            if(_cameraShake != null)
+                _cameraShake.StartShake(0.05f, 0.1f);
+            StartCoroutine(ShieldHit(dmgAmount));
+            dmgAmount -= _shieldLife;
+            if (dmgAmount < 1)
+                return;
         }
 
-        _lives--;
+        _lives -= dmgAmount;
         _isInvulnerable = true;
         _uiManager.UpdateLives(_lives);
+        if (_damageFragments != null)
+            _damageFragments.Fragmentize();
 
         if (_lives == 2)
         {
-            if(List_Engines != null && List_Engines.Count > 0)
+            if (_cameraShake != null)
+                _cameraShake.StartShake(0.15f, 0.4f);
+
+            if (List_Engines != null && List_Engines.Count > 0)
             {
                 int randomIndex = Random.Range(0, List_Engines.Count);
                 GameObject engine1 = List_Engines[randomIndex];
@@ -483,9 +551,17 @@ public class Player : MonoBehaviour
         }
         else if(_lives == 1)
         {
+            if (_cameraShake != null)
+                _cameraShake.StartShake(0.25f, 0.6f);
+
             if (List_Engines != null && List_Engines.Count > 0)
             {
-                GameObject engine2;
+                GameObject engine1 = List_Engines[0];
+                GameObject engine2 = List_Engines[1];
+                engine1.SetActive(true);
+                engine2.SetActive(true);
+                
+                /*GameObject engine2;
                 if (List_Engines[0].activeSelf == true)
                 {
                     engine2 = List_Engines[1];
@@ -493,20 +569,26 @@ public class Player : MonoBehaviour
                 else
                     engine2 = List_Engines[0];
                 
-                engine2.SetActive(true);
+                engine2.SetActive(true);*/
             }
             StartCoroutine(ResetInvulernability(0.5f));
         }
         else if(_lives < 1)
         {
-            if(_spawnManager != null)
+            if (_cameraShake != null)
+                _cameraShake.StartShake(0.35f, 0.8f);
+
+            if (_spawnManager != null)
             {
                 Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
                 _spawnManager.OnPlayerDeath();
-                Destroy(gameObject);
+
+                 Destroy(gameObject);
             }
         }
     }
+
+    
 
     IEnumerator ResetInvulernability(float timeToRestore)
     {
@@ -515,9 +597,10 @@ public class Player : MonoBehaviour
     }
 
 
-    private IEnumerator ShieldHit()
+    private IEnumerator ShieldHit(int dmgAmount)
     {
         _isInvulnerable = true;
+        StartCoroutine(PlayEnergyExplosion());
 
         for (float t = 0; t < _invulnerabilityTime; t += Time.deltaTime)
         {
@@ -527,7 +610,9 @@ public class Player : MonoBehaviour
                 Mathf.Lerp(_minPulseIntensity, _maxPulseIntensity, pulse);
             yield return null;
         }
-        _shieldLife--;
+        _shieldLife -= dmgAmount;
+        if(_shieldLife < 0)
+            _shieldLife = 0;
 
         _audioSource2.clip = _shieldDamagedSound;
         _audioSource2.time = _audio2_StartTime;
@@ -582,6 +667,20 @@ public class Player : MonoBehaviour
             _shieldsLight.intensity = pulse;
         }
     }
+    IEnumerator PlayEnergyExplosion()
+    {
+        if(_shieldExplosionEffect != null)
+        {
+            _shieldExplosionEffect.Play();
+            /*while (_shieldExplosionEffect.IsAlive(true))
+                yield return null;*/
+
+            yield return new WaitForSeconds(1.2f);
+
+            _shieldExplosionEffect.Stop();
+        }
+        
+    }
 
 
     public void ActivatePowerup(int powerupID)
@@ -609,6 +708,7 @@ public class Player : MonoBehaviour
                 _shieldVisualizer?.SetActive(true);
                 _shieldLife = 3;
                 _shieldsLight.color = _fullShieldsCol;
+                StartCoroutine(PlayEnergyExplosion());
                 break;
 
             case 3:
@@ -618,6 +718,10 @@ public class Player : MonoBehaviour
 
             case 4:
                 StartCoroutine(RegainHealthRoutine());
+                break;
+
+            case 5:
+                StartCoroutine(ReadyMissilesRoutine());
                 break;
 
             default:
@@ -749,43 +853,212 @@ public class Player : MonoBehaviour
         sprite.color = new Color(sprite.color.r, sprite.color.g, sprite.color.b, 0); // Reset alpha to 0
     }
 
-
-    /*IEnumerator MoveShipUI_Routine(Transform t_ShipUI, SpriteRenderer sprite, int spriteIndex, Vector2 startPos, Vector2 endPos, float timeToMove)
+    /*void HeatSeekers()
     {
+        *//*if (_hasMissiles)
+            if (_canMissilesStack == false)
+                return;*/
 
+
+    /*if (_canMissilesAutoRefresh)
+        _willReloadMissiles = true;*//*
+
+
+    StartCoroutine(ReadyMissilesRoutine());
+    StartCoroutine(DeactivateMissileRoutine());
+}*/
+    #region simpler heatseeker code -- new
+
+    
+
+    public IEnumerator ReadyMissilesRoutine()
+    {
+        //  Don't allow new missiles if already have missiles
+        if (HasMissiles())
+            yield break;
+
+        //  Spawn both left/right missiles behind Player ship
+        GameObject leftMissile = Instantiate(_heatseekerPrefab, 
+            _startPosLeftMissile, Quaternion.identity, this.transform);
+        GameObject rightMissile = Instantiate(_heatseekerPrefab, 
+            _startPosRightMissile, Quaternion.identity, this.transform);
+
+        Transform t_LeftMissile = leftMissile.transform;
+        Transform t_RightMissile = rightMissile.transform;
+
+        //  Missiles float outward to ready position (under each wing)
         float t = 0;
-        while (t < 1)
+        while (t < _timeToReadyMissiles)
         {
-            t += Time.deltaTime / timeToMove;
+            t += Time.deltaTime;
 
-            // Fade in the CanvasGroup
-            if (t < 0.5f)
-            {
-                sprite.alpha = t * 2; // This will reach 1 when t is 0.5
-            }
+            // Calculate each missile's position using linear interpolation (Lerp)
+            Vector2 currentPos_LeftMissile = Vector2.Lerp(_startPosLeftMissile, 
+                _readyPosLeftMissile, t / _timeToReadyMissiles);
+            Vector2 currentPos_RightMissile = Vector2.Lerp(_startPosRightMissile, 
+                _readyPosRightMissile, t / _timeToReadyMissiles);
 
-            // Use Lerp to smoothly transition from the start position to the end position
-            rt_ShipUI.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
+            // Update positions of both missiles
+            t_LeftMissile.localPosition = currentPos_LeftMissile;
+            t_RightMissile.localPosition = currentPos_RightMissile;
 
             yield return null;
         }
-        if (_uiManager != null)
-            _uiManager.SwapLivesSprite(spriteIndex); 
-        {
-
-        }
         
-        yield return new WaitForSeconds(0.1f);
-        Reset_ShipUIs(rt_ShipUI, cg_ShipUI, startPos);
+        // After coroutine, each missile is armed and ready to seek targets
+        _currentLeftMissile = leftMissile;
+        _currentRightMissile = rightMissile;
+
+        _canFireMissiles = true;
     }
 
-    public void Reset_ShipUIs(Transform t_ShipUI, SpriteRenderer sprite, Vector2 startPos)
+    bool HasMissiles()
     {
-        t_ShipUI.position = startPos;
-        cg_ShipUI.alpha = 0f;
+        bool hasMissiles = false;
+
+        //  Player "HasMissiles" if either missile is being tracked
+        if (_currentLeftMissile != null || _currentRightMissile != null)
+            hasMissiles = true;
+
+        return hasMissiles;
+    }
+
+
+
+    void LaunchHeatSeekers()
+    {
+        if(_currentLeftMissile != null && _currentRightMissile != null)
+        {
+            HeatSeekingMissile hsm_Left = 
+                _currentLeftMissile.GetComponent<HeatSeekingMissile>();
+            HeatSeekingMissile hsm_Right = 
+                _currentRightMissile.GetComponent<HeatSeekingMissile>();
+
+            Vector2 playerPos = transform.position;
+
+            //  Signal each missile to fire, passing in Player's Position
+            if (hsm_Left != null && hsm_Right != null)
+            {
+                hsm_Left.FireMissile(LeftOrRightMissile.Left, playerPos);
+                hsm_Right.FireMissile(LeftOrRightMissile.Right, playerPos);
+            }
+            //  Player can no longer fire missiles
+            _canFireMissiles = false;
+
+            //  ...but can now pick up new missiles
+            _currentLeftMissile = null;
+            _currentRightMissile = null;
+        }
+    }
+
+
+
+#endregion
+
+    #region complex heatseekers -- old code
+
+    /*IEnumerator DeactivateMissileRoutine()
+    {
+        yield return null;
+        yield return new WaitForSeconds(_durationForMissiles);
+        _willReloadMissiles = false;
+    }
+
+    public IEnumerator ReadyMissilesRoutine()
+    {
+        StartCoroutine(DeactivateMissileRoutine());
+
+        if (_hasMissiles)
+            if (_canMissilesStack == false)
+                yield break;
+
+        if (_canMissilesAutoRefresh || HasMissiles() == false)
+            _willReloadMissiles = true;
+
+        if (_willReloadMissiles == false)
+            yield break;
+
+        GameObject leftMissile = Instantiate(_heatseekerPrefab,
+            _startPosLeftMissile, Quaternion.identity, this.transform);
+        GameObject rightMissile = Instantiate(_heatseekerPrefab,
+            _startPosRightMissile, Quaternion.identity, this.transform);
+
+        Transform t_LeftMissile = leftMissile.transform;
+        Transform t_RightMissile = rightMissile.transform;
+
+        _hasMissiles = true;
+        //Play sound effect of Missiles being reloaded
+
+        float t = 0;
+        while (t < _timeToReadyMissiles)
+        {
+            t += Time.deltaTime;
+
+            // Calculate the current position using linear interpolation (Lerp)
+            Vector2 currentPos_LeftMissile = Vector2.Lerp(_startPosLeftMissile, _readyPosLeftMissile, t / _timeToReadyMissiles);
+            Vector2 currentPos_RightMissile = Vector2.Lerp(_startPosRightMissile, _readyPosRightMissile, t / _timeToReadyMissiles);
+
+            // Update the position of the missile
+            t_LeftMissile.localPosition = currentPos_LeftMissile;
+            t_RightMissile.localPosition = currentPos_RightMissile;
+
+            yield return null;
+        }
+
+        _currentLeftMissile = leftMissile;
+        _currentRightMissile = rightMissile;
+
+        // After the coroutine is done, the missile is armed and ready to seek targets
+        AllowMissilesToFire();
+    }
+
+    void AllowMissilesToFire()
+    {
+        _canFireMissiles = true;
+    }
+
+    bool HasMissiles()
+    {
+        if (_currentLeftMissile == null && _currentRightMissile == null)
+            _hasMissiles = false;
+        else
+            _hasMissiles = true;
+
+        return _hasMissiles;
+    }
+
+
+
+    IEnumerator LaunchHeatSeekersRoutine()
+    {
+        if (_currentLeftMissile != null && _currentRightMissile != null)
+        {
+            HeatSeekingMissile hsm_Left = _currentLeftMissile.GetComponent<HeatSeekingMissile>();
+            HeatSeekingMissile hsm_Right = _currentRightMissile.GetComponent<HeatSeekingMissile>();
+
+            Vector2 playerPos = transform.position;
+
+            if (hsm_Left != null && hsm_Right != null)
+            {
+                hsm_Left.FireMissile(LeftOrRightMissile.Left, playerPos);
+                hsm_Right.FireMissile(LeftOrRightMissile.Right, playerPos);
+            }
+
+            _canFireMissiles = false;
+            _hasMissiles = false;
+
+            _currentLeftMissile = null;
+            _currentRightMissile = null;
+
+            if (_willReloadMissiles)
+            {
+                yield return new WaitForSeconds(_timeBetweenMissiles);
+                StartCoroutine(ReadyMissilesRoutine());
+            }
+        }
     }*/
 
-
+    #endregion
 
 
     public void AddScore(int points)
@@ -801,6 +1074,11 @@ public class Player : MonoBehaviour
         bool isInvulnerable = _isInvulnerable;
         return isInvulnerable;
 
+    }
+
+    public bool CanMissilesHurtPlayer()
+    {
+        return _canMissilesHurtSelf;
     }
 
     

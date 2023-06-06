@@ -46,7 +46,7 @@ public class AsteroidShell : MonoBehaviour
         if(childAsteroid == null)
             Destroy(gameObject);
 
-        if(transform.position.y <= -20.0f)
+        if(transform.position.y <= -18.0f)
         {
             Destroy(gameObject, 5.0f);
         }

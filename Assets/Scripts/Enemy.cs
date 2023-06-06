@@ -8,6 +8,8 @@ public class Enemy : MonoBehaviour
     SpawnManager spawnManager;
     Player _player;
     [SerializeField]
+    CameraShake _cameraShake;
+    [SerializeField]
     float _speed = 4.0f;
     //public float startDelay = 2.0f;
     public float delayRespawn = 1.5f;
@@ -22,7 +24,8 @@ public class Enemy : MonoBehaviour
 
     [SerializeField]
     Transform _destroyedTransform;
-   
+    [SerializeField]
+    DamageFragments _damageFragments;
 
     [SerializeField]
     float _minDestroyedSpeedMultiplier = 0.5f;
@@ -38,6 +41,8 @@ public class Enemy : MonoBehaviour
     bool _canFire = true;
     [SerializeField]
     GameObject _dualShotPrefab;
+    [SerializeField]
+    Transform _laserContainer;
     /*[SerializeField]
     float _laser1_X_Offset = -0.25f;
     [SerializeField]
@@ -94,6 +99,12 @@ public class Enemy : MonoBehaviour
         
         float ranStartFire = Random.Range(1.0f, _maxTimeTilNextFire);
         _timeTilNextFire = ranStartFire;
+        if(_laserContainer == null)
+            _laserContainer = GameObject.Find("LaserContainer").transform;
+        if (_damageFragments == null)
+            _damageFragments = GetComponent<DamageFragments>();
+        if(_cameraShake == null)
+            _cameraShake = GameObject.Find("Main Camera").GetComponent<CameraShake>();
     }
 
     private void OnEnable()
@@ -199,8 +210,10 @@ public class Enemy : MonoBehaviour
         _timeTilNextFire = Random.Range(_minTimeTilNextFire, _maxTimeTilNextFire);
         //Vector3 posA = new Vector3(transform.position.x, transform.position.y + _laser_yOffset, 0);
         Vector3 pos = new Vector3(transform.position.x, transform.position.y, 0);
-        var dualLasers = Instantiate(_dualShotPrefab, pos, Quaternion.identity);
-        if(List_EnemyDualLaserClips != null && List_EnemyDualLaserClips.Count > 0)
+        Instantiate(_dualShotPrefab, pos, Quaternion.identity, _laserContainer);
+
+        //var dualLasers = Instantiate(_dualShotPrefab, pos, Quaternion.identity);
+        if (List_EnemyDualLaserClips != null && List_EnemyDualLaserClips.Count > 0)
         {
             int ranIndex = Random.Range(0, List_EnemyDualLaserClips.Count);
             AudioClip ranClip = List_EnemyDualLaserClips[ranIndex];
@@ -215,26 +228,51 @@ public class Enemy : MonoBehaviour
         {
             _player = other.transform.GetComponent<Player>();
             if (_player != null)
-                _player.Damage();
+                _player.Damage(gameObject, 1);
 
-            DestroySelf(gameObject);
+            DestroySelf();
         }
         else if (other.tag == "Laser")
         {
             Destroy(other.gameObject);
-            DestroySelf(gameObject);
-        }else if(other.tag == "Asteroid")
+            DestroySelf();
+        }
+        else if(other.tag == "Asteroid")
         {
             //Destroy(other.gameObject);        ! Asteroid will destroy itself
-            DestroySelf(gameObject);
+            DestroySelf();
+        }
+        else if (other.tag == "Missile")
+        {
+            //Destroy(other.gameObject);          //  Missile will detach its particle effect
+            DestroySelf();
+        }
+        else if (other.tag == "Explosion")
+        {
+            DestroySelf();
         }
     }
 
 
-
-    void DestroySelf(GameObject go)
+    //  When Enemy dies...
+    public void DestroySelf()
     {
         _isDead = true;
+        if(_player != null)
+        {
+            Transform playerTrans = _player.transform;
+            Vector3 playerPos = playerTrans.position;
+            _cameraShake.StartDynamicShake(0.1f, 0.2f, playerPos, transform.position);
+        }
+        
+        
+        
+        
+        /*if(_player!= null)
+        {
+            StartCoroutine(_cameraShake.DynamicShake(0.1f, 0.2f, _player.transform.position, transform.position));
+
+        }*/
 
         if (_anim != null)
             _anim.SetBool("OnEnemyDestroyed", true);
@@ -244,7 +282,10 @@ public class Enemy : MonoBehaviour
         if (_player != null)
             _player.AddScore(10);
 
-        if(spawnManager != null)
+        if (_damageFragments != null)
+            _damageFragments.Fragmentize();
+
+        if (spawnManager != null)
         {
             //Manage Enemies in list?
             spawnManager.ReduceEnemyCount();
@@ -262,7 +303,7 @@ public class Enemy : MonoBehaviour
             _audioSource_Explosion.clip = ranClip;
         }
         _audioSource_Explosion.Play();
-        Destroy(go, _timeToDestroy);
+        Destroy(gameObject, _timeToDestroy);
     }
 
     IEnumerator RotateExplodingShip()

@@ -11,6 +11,9 @@ using UnityEngine.Rendering.Universal;
 public class TimeWarp : MonoBehaviour
 {
     [SerializeField]
+    CameraShake _cameraShake;
+    
+    [SerializeField]
     AudioSource _audioSource;
     [SerializeField]
     AudioClip _timeWarp_Clip;
@@ -61,6 +64,9 @@ public class TimeWarp : MonoBehaviour
         if (!volumeProfile.TryGet(out lensDistortion)) throw new System.NullReferenceException(nameof(lensDistortion));
         
         lensDistortion.intensity.Override(0.00f);
+
+        if (_cameraShake == null)
+            _cameraShake = GetComponentInParent<CameraShake>();
 
 
 
@@ -118,6 +124,8 @@ public class TimeWarp : MonoBehaviour
         lensDistortion.intensity.Override(startIntensity);
 
         //  Step 2 (of 3)   INTENSITY to min
+        if(_cameraShake != null)
+            _cameraShake.StartShake(3f, 0.25f);
         while (elapsedTime < timeTilMinIntense)
         {
             yield return null;
