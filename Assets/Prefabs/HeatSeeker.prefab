@@ -5266,7 +5266,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 244f17a7b6fbe534caeb550712d3c175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 7.5
+  _cameraShake: {fileID: 0}
+  _transPlayer: {fileID: 0}
+  _speed: 9
   _rotateSpeed: 200
   _trans_Thruster: {fileID: 6478970030818036213}
   _flameParticles: {fileID: 6568783735480178847}

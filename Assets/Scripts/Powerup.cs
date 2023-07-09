@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class Powerup : MonoBehaviour
 {
-    [SerializeField]
-    float _speed = 3.0f;
-    
-    [SerializeField]  //0 = TripleShot  //1 = Speed  //2 = Shields   //3 = Ammo  //4 = Health   //5 = Homing
-    int _powerupID;
+    [SerializeField] float _speed = 3.0f;
+
+    //0 = TripleShot  //1 = Speed  //2 = Shields   //3 = Ammo  //4 = Health   //5 = Homing
+    [SerializeField] int _powerupID;
+    //0 = EN_BurstFire  //1 = EN_Speed  //2 = EN_Shields   //3 = ____  //4 = EN_Invulerna   //5 = _____
+    [SerializeField] bool _isCorrupted = false;
+    [SerializeField] float _durationOfCorruption = 5.0f;
 
     [SerializeField]
     AudioClip _clip;
@@ -21,6 +23,9 @@ public class Powerup : MonoBehaviour
 
     [SerializeField]
     Transform _transCam;
+
+    //temp
+    public float lastTime;
     
 
     void Start()
@@ -36,6 +41,13 @@ public class Powerup : MonoBehaviour
 
             if (transform.position.y < -7.0f)
                 Destroy(gameObject);
+
+
+
+
+
+
+            lastTime = Time.time;
         }
         
     }
@@ -47,7 +59,8 @@ public class Powerup : MonoBehaviour
             Player player = other.transform.GetComponent<Player>();
             if(player != null)
             {
-                player.ActivatePowerup(_powerupID);
+                
+                player.ActivatePowerup(_powerupID, _isCorrupted, _durationOfCorruption);
                 
                 if(List_PowerupClips != null && List_PowerupClips.Count > 0)
                 {
@@ -63,7 +76,7 @@ public class Powerup : MonoBehaviour
             rend.enabled = false;
             BoxCollider2D collider = GetComponent<BoxCollider2D>();
             collider.enabled = false;
-            Destroy(this.gameObject, 3.0f);
+            Destroy(this.gameObject, 0.1f);
         }
     }
 }

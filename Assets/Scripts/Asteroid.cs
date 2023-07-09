@@ -74,7 +74,7 @@ public class Asteroid : MonoBehaviour
             {
                 if (spawnManager.IsUsingAsteroidToStart())
                 {
-                    spawnManager.StartSpawning();
+                    spawnManager.StartSimpleSpawning();
                     _didStart = true;
                 }
             }

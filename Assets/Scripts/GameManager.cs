@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField]
-    bool _isGameOver;
+    //[SerializeField]
+    public static bool isGameOver;
 
     [SerializeField]
     bool _isUsingTimeWarp = true;
@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        _isGameOver = false;
+        isGameOver = false;
         _isReloadingScene = false;
         quit_Slider.minValue = 0.0f;
         quit_Slider.maxValue = 1.0f;
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
         #region irrelevant logic
         if (!isGamePaused)
         {
-            if (Input.GetKeyDown(KeyCode.R) && _isGameOver && _isReloadingScene == false)
+            if (Input.GetKeyDown(KeyCode.R) && isGameOver && _isReloadingScene == false)
             {
                 _isReloadingScene = true;
 
@@ -302,8 +302,9 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        _isGameOver = true;
+        isGameOver = true;
     }
+    public static bool IsGameOver() { return isGameOver; }
 
     IEnumerator LoadScene_Async()
     {

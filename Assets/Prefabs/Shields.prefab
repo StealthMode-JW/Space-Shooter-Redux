@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6928715429994304451}
   - component: {fileID: 6928715429994304450}
   - component: {fileID: 4460217029026707513}
+  - component: {fileID: 8694692562712327888}
   m_Layer: 0
   m_Name: Shields
   m_TagString: Untagged
@@ -105,3 +106,30 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8694692562712327888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6928715429994304449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b7ba135328f634aa745c55109a6714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shieldVisualizer: {fileID: 0}
+  _shieldSprite: {fileID: 0}
+  _shieldExplosionEffect: {fileID: 0}
+  _shieldLife: 0
+  _isInvulnerable: 0
+  _invulnerabilityTime: 1.5
+  _shieldsLight: {fileID: 0}
+  _fullShieldsCol: {r: 0, g: 0, b: 1, a: 1}
+  _halfShieldsCol: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _criticalShieldsCol: {r: 1, g: 0, b: 0, a: 1}
+  _steadyPulseSpeed: 5
+  _transitionPulseSpeed: 30
+  _colorTransitionSpeed: 3
+  _minPulseIntensity: 0
+  _maxPulseIntensity: 0.75

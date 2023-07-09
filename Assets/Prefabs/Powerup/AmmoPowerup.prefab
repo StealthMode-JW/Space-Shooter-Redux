@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2049979065336584830}
+  - component: {fileID: 3979578326139987242}
   - component: {fileID: 193928388485174476}
   - component: {fileID: 618237318106762454}
   - component: {fileID: 3591599627899071895}
-  - component: {fileID: 3979578326139987242}
   - component: {fileID: 3158452802623631662}
   - component: {fileID: 1802507180036992773}
   m_Layer: 0
@@ -30,13 +30,35 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4737854873296838725}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.36, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3979578326139987242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4737854873296838725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd3323a9cbbc76c418e3262c2571fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 3
+  _powerupID: 3
+  _isCorrupted: 0
+  _durationOfCorruption: 5
+  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _audioSource: {fileID: -8904331987722499488, guid: f4e53fb3894470345abcd296ebf97304, type: 3}
+  List_PowerupClips:
+  - {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _transCam: {fileID: 1434707106345860822, guid: 2cb032203a764c147b997d60583fdd1c, type: 3}
+  lastTime: 0
 --- !u!212 &193928388485174476
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -136,25 +158,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &3979578326139987242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4737854873296838725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3323a9cbbc76c418e3262c2571fe19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 3
-  _powerupID: 3
-  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
-  _audioSource: {fileID: -8904331987722499488, guid: f4e53fb3894470345abcd296ebf97304, type: 3}
-  List_PowerupClips:
-  - {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
-  _transCam: {fileID: 1434707106345860822, guid: 2cb032203a764c147b997d60583fdd1c, type: 3}
 --- !u!82 &3158452802623631662
 AudioSource:
   m_ObjectHideFlags: 0

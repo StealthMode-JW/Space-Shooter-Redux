@@ -8,24 +8,56 @@ using UnityEngine.XR;
 
 public class Laser : MonoBehaviour
 {
+    public static int nextLaserID = 0;
+    [SerializeField] string laserID;
+    public string myCreatorID;
+    
     [SerializeField]
     float _speed = 8.0f;
 
     Player _player;
 
-    [SerializeField]
-    float _timeTilCanHitPlayer = 0.5f;
+    /*[SerializeField]
+    float _timeTilCanHitPlayer = 0.01f;
+    
     [SerializeField]
     bool _canHitPlayer = false; //want to make sure his own fire doesn't hit him.
+    [SerializeField]
+    float _timeTilEnableCollider = 0.01f;*/
+    BoxCollider2D _boxCollider;
+    //bool _canCollide = false;
+
+
+    private void Awake()
+    {
+        int ID = nextLaserID++;
+        laserID = "LA" + ID + "_" + System.Guid.NewGuid().ToString();
+    }
 
     private void Start()
     {
-        
-        //StartCoroutine(SetupLaser());
+        //This is for transformation 
+        //
+        //StartCoroutine(SetupLaser()); 
         
     }
+    private void OnEnable()
+    {
+        _boxCollider = GetComponent<BoxCollider2D>();
+        //_boxCollider.enabled = false;
+        _boxCollider.enabled = true;
+    }
 
-   
+    public string GetMyLaserID()
+    {
+        return laserID;
+    }
+    public string GetMyCreatorsID()
+    {
+        return myCreatorID;
+    }
+
+
     IEnumerator SetupLaser()
     {
         
@@ -55,19 +87,27 @@ public class Laser : MonoBehaviour
     {
         if (!GameManager.isGamePaused)
         {
-            if (_canHitPlayer == false)
+            /*if (_canHitPlayer == false)
             {
                 _timeTilCanHitPlayer -= Time.deltaTime;
                 if (_timeTilCanHitPlayer <= 0)
                     _canHitPlayer = true;
             }
+            if(_canCollide == false)
+            {
+                _timeTilEnableCollider -= Time.deltaTime;
+                if (_timeTilEnableCollider <= 0) 
+                {
+                    _canCollide = true;
+                    _boxCollider.enabled = true;
+                }
 
+                    
+            }*/
 
             transform.Translate(Vector3.up * _speed * Time.deltaTime);
 
-            if (transform.position.y > 6.0f)
-
-
+            if (transform.position.y > 6.0f || transform.position.y < -6.0f || transform.position.x > 10.0f || transform.position.x < -10.0f)
             {
                 if (transform.parent != null)
                 {
@@ -87,14 +127,20 @@ public class Laser : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player" && _canHitPlayer)
+        //if (other.tag == "Player" && _canHitPlayer)
+        if (other.tag == "Player")
         {
             _player = other.transform.GetComponent<Player>();
             if (_player != null)
-                _player.Damage(gameObject, 1);
+            {
+                string playerID = _player.GetMyPlayerID();
+                if (playerID == myCreatorID)
+                    return;
+                else
+                    _player.Damage(gameObject, 1);
 
-            Destroy(this.gameObject);
+                Destroy(this.gameObject);
+            }
         }
-        
     }
 }

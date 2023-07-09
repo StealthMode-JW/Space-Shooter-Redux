@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7552258278391810150}
+  - component: {fileID: 4866054312338994994}
   - component: {fileID: 8506463162073482964}
   - component: {fileID: 8946845317894446798}
   - component: {fileID: 5001831431442972559}
-  - component: {fileID: 4866054312338994994}
   - component: {fileID: 120477737659518630}
   - component: {fileID: 6875004231131341622}
   m_Layer: 0
@@ -30,13 +30,35 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3854450286142026333}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.36, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4866054312338994994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3854450286142026333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd3323a9cbbc76c418e3262c2571fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 3
+  _powerupID: 4
+  _isCorrupted: 0
+  _durationOfCorruption: 5
+  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _audioSource: {fileID: -8904331987722499488, guid: f4e53fb3894470345abcd296ebf97304, type: 3}
+  List_PowerupClips:
+  - {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _transCam: {fileID: 1434707106345860822, guid: 2cb032203a764c147b997d60583fdd1c, type: 3}
+  lastTime: 0
 --- !u!212 &8506463162073482964
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -78,7 +100,7 @@ SpriteRenderer:
   m_SortingLayerID: -1472568755
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2047208566, guid: c02f26d444e3e6e4990a51d845733c2b, type: 3}
+  m_Sprite: {fileID: -2251353, guid: 77ac66d8f4fcf414cbef3cb4ab9c84fa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -136,25 +158,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &4866054312338994994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3854450286142026333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3323a9cbbc76c418e3262c2571fe19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 3
-  _powerupID: 4
-  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
-  _audioSource: {fileID: -8904331987722499488, guid: f4e53fb3894470345abcd296ebf97304, type: 3}
-  List_PowerupClips:
-  - {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
-  _transCam: {fileID: 1434707106345860822, guid: 2cb032203a764c147b997d60583fdd1c, type: 3}
 --- !u!95 &120477737659518630
 Animator:
   serializedVersion: 4

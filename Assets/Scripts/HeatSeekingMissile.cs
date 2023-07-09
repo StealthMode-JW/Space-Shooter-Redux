@@ -146,7 +146,7 @@ public class HeatSeekingMissile : MonoBehaviour
     {
         _audioSource1.clip = _explosionMissileClip;
         _audioSource1.Play();
-        if(_cameraShake != null)
+        if(_cameraShake != null && _transPlayer != null)
             _cameraShake.StartDynamicShake(0.3f, 0.6f, _transPlayer.position, transform.position);
 
         if (_bigExplosionPrefab != null)

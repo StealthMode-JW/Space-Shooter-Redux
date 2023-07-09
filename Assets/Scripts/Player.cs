@@ -14,10 +14,12 @@ using static HeatSeekingMissile;
 using Unity.VisualScripting;
 using System.Net;
 using TMPro.SpriteAssetUtilities;
+using static Shields;
 
 public class Player : MonoBehaviour
 {
-    
+    public static int nextPlayerID = 0;
+    [SerializeField, ReadOnly] string playerID;
     
     [SerializeField]
     SpawnManager _spawnManager;
@@ -78,6 +80,8 @@ public class Player : MonoBehaviour
     ParticleSystem _burstParticles_1;
     [SerializeField]
     ParticleSystem _burstParticles_2;
+    [SerializeField]
+    ParticleSystem _healParticles;
 
 
     [Space(5)]
@@ -90,20 +94,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     Vector2 _playerIntroPos = new Vector2(0f, -7f);
 
-    [SerializeField]
-    AudioSource _audioSource1;  //  Starts regularTime
-    [SerializeField]
-    AudioSource _audioSource2;  //  Starts later in Clip (plays sound earlier)
-    [SerializeField]
-    float _audio2_StartTime = 0.5f;
+    [SerializeField] AudioSource _audioSource1;  //  Starts regularTime
+    
     /*[SerializeField]
     AudioClip _laserSoundClip;*/
     [SerializeField]
     List<AudioClip> List_LaserFireSounds = new List<AudioClip>();
     [SerializeField]
     List<AudioClip> List_TripleShotSounds = new List<AudioClip>();
-    [SerializeField]
-    AudioClip _shieldDamagedSound;
+    
 
     [Space(10)]
 
@@ -122,6 +121,8 @@ public class Player : MonoBehaviour
     Transform _tripleShotContainer;
     [SerializeField]
     float _tripleShotPowerDownTime = 5.0f;
+    [SerializeField]
+    bool _use1ammo_forTripleShot = true;
     [Space(5)]
 
     [SerializeField]
@@ -137,14 +138,16 @@ public class Player : MonoBehaviour
     [Space(5)]
 
     [Header("SHIELDS")]
-    [SerializeField]
-    GameObject _shieldVisualizer;
-    [SerializeField]
-    SpriteRenderer _shieldSprite;
-    [SerializeField]
-    ParticleSystem _shieldExplosionEffect;
+    [SerializeField] Shields _shields;
+    [SerializeField] GameObject _shieldObj;
+    [SerializeField] SpriteRenderer _shieldSprite;
+    [SerializeField] ParticleSystem _shieldExplosionEffect;
+    [SerializeField] AudioSource _audioSource_Shields;  //  Starts later in Clip (plays sound earlier)
+    [SerializeField] float _audioShields_StartTime = 0.5f;
+    [SerializeField] AudioClip _shieldDamagedSound;
 
-    [SerializeField]
+
+    [SerializeField, ReadOnly]
     int _shieldLife = 0;
 
     [SerializeField]
@@ -152,8 +155,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     float _invulnerabilityTime = 1.5f;
 
-    [SerializeField]
-    Light2D _shieldsLight;
+    /*[SerializeField]
+    Light2D _shieldsLight;*/
     [SerializeField]
     Color _fullShieldsCol = Color.blue;
     [SerializeField]
@@ -232,7 +235,11 @@ public class Player : MonoBehaviour
     GameObject _currentLeftMissile;
     GameObject _currentRightMissile;
 
-
+    void Awake()
+    {
+        int ID = nextPlayerID++;
+        playerID = "PL" + ID + "_" + System.Guid.NewGuid().ToString();
+    }
 
     #region more complex heatseeker variable list
     /*[Header("MISSILES")]
@@ -276,8 +283,8 @@ public class Player : MonoBehaviour
         if (_audioSource1 == null)
             Debug.LogError("PLAYER: AudioSource is NULL!");
 
-        if (_audioSource2 != null)
-            _audioSource2.time = _audio2_StartTime;
+        /*if (_audioSource2 != null)
+            _audioSource2.time = _audio2_StartTime;*/
        
         if(_spawnManager == null)
             _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -332,8 +339,12 @@ public class Player : MonoBehaviour
             {
                 CalculateMovement();
 
-                if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
-                    FireLaser();
+                if (Time.time > _canFire)
+                {
+                    if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+                        FireLaser();
+                }
+                
 
                 if (HasMissiles() && _canFireMissiles)
                     if(Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(1))
@@ -341,7 +352,7 @@ public class Player : MonoBehaviour
                     
                 
 
-                UpdateShieldVisuals();
+                //UpdateShieldVisuals();
             }
         }
     }
@@ -372,10 +383,6 @@ public class Player : MonoBehaviour
     IEnumerator PlayerIntroRoutine()
     {
         transform.position = _playerIntroPos;
-
-        /*float yPos_Start = transform.position.y;
-        float yPos_Target = _playerStartPos.y + 0.25f;
-        float yPos_Current;*/
 
         yield return new WaitForSeconds(0.5f);
 
@@ -424,14 +431,32 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireDelay;
             Vector3 pos = new Vector3(transform.position.x, 
                 transform.position.y + _laser_yOffset, 0);
-            
-            if (_isTripleShotEnabled && _ammoCount > 2)
+
+            //if (_isTripleShotEnabled && _ammoCount > 2)
+            if (_isTripleShotEnabled) 
             {
-                _ammoCount -= 3;
+                if (_use1ammo_forTripleShot == false)
+                {
+                    if (_ammoCount > 2)
+                    {
+                        _ammoCount -= 3;
+                    }
+                    else
+                        return;
+                }
+                else
+                    _ammoCount--;
+                
                 
                 GameObject newTripleShot = Instantiate(_tripleShotPrefab, 
                     pos, Quaternion.identity);
                 newTripleShot.transform.parent = _tripleShotContainer;
+                Laser laser1 = newTripleShot.transform.GetChild(0).GetComponent<Laser>();
+                laser1.myCreatorID = this.playerID;
+                Laser laser2 = newTripleShot.transform.GetChild(1).GetComponent<Laser>();
+                laser2.myCreatorID = this.playerID;
+                Laser laser3 = newTripleShot.transform.GetChild(2).GetComponent<Laser>();
+                laser3.myCreatorID = this.playerID;
 
                 int ranIndex = Random.Range(0, List_TripleShotSounds.Count);
                 ranClip = List_TripleShotSounds[ranIndex];
@@ -441,9 +466,9 @@ public class Player : MonoBehaviour
             {
                 _ammoCount--;
 
-                Instantiate(_laserPrefab, pos, Quaternion.identity, _laserContainer);
-                /*GameObject newLaser = Instantiate(_laserPrefab, pos, 
-                    Quaternion.identity, _laserContainer);*/
+                GameObject newLaser = Instantiate(_laserPrefab, pos, Quaternion.identity, _laserContainer);
+                Laser laser = newLaser.GetComponent<Laser>();
+                laser.myCreatorID = this.playerID;
                 //newLaser.transform.parent = _laserContainer;
 
                 int ranIndex = Random.Range(0, List_LaserFireSounds.Count);
@@ -510,24 +535,41 @@ public class Player : MonoBehaviour
     {
         //  Check the tags for who damaged us for special interactions
         //      "Enemy" "Laser" "Asteroid"  "Missile"
-        
-        if (_isInvulnerable)
-            return;
 
-        if(dmgGO.tag == "Missile")
+        if (dmgGO.tag == "Missile")
         {
             if (_canMissilesHurtSelf == false) //   Set in Editor
                 return;
-        } 
+        }
+        if (_isInvulnerable)
+            return;
 
-        if (_shieldLife > 0)
+
+        if (_shieldObj.activeInHierarchy)
         {
-            if(_cameraShake != null)
-                _cameraShake.StartShake(0.05f, 0.1f);
-            StartCoroutine(ShieldHit(dmgAmount));
-            dmgAmount -= _shieldLife;
-            if (dmgAmount < 1)
+            bool isInvulernableFromShields = false;
+            isInvulernableFromShields = _shields.IsInvulernable();
+            if (isInvulernableFromShields)
                 return;
+
+            _shieldLife = _shields.GetShieldStrength();
+            if (_shieldLife > 0)
+            {
+                if (_cameraShake != null)
+                    _cameraShake.StartShake(0.05f, 0.1f);
+                _isInvulnerable = true;
+                
+                StartCoroutine(_shields.ShieldHit(dmgAmount));
+                //StartCoroutine(ShieldHit(dmgAmount));
+                var dmgToShields = dmgAmount;
+                dmgAmount -= _shieldLife;
+                _shieldLife -= dmgToShields;
+                if (_shieldLife < 0)
+                    _shieldLife = 0;
+                StartCoroutine(ResetInvulernability(0.5f));
+                if (dmgAmount <= 0)
+                    return;
+            }
         }
 
         _lives -= dmgAmount;
@@ -596,8 +638,9 @@ public class Player : MonoBehaviour
         _isInvulnerable = false;
     }
 
+   
 
-    private IEnumerator ShieldHit(int dmgAmount)
+    /*private IEnumerator ShieldHit(int dmgAmount)
     {
         _isInvulnerable = true;
         StartCoroutine(PlayEnergyExplosion());
@@ -672,20 +715,23 @@ public class Player : MonoBehaviour
         if(_shieldExplosionEffect != null)
         {
             _shieldExplosionEffect.Play();
-            /*while (_shieldExplosionEffect.IsAlive(true))
-                yield return null;*/
+            *//*while (_shieldExplosionEffect.IsAlive(true))
+                yield return null;*//*
 
             yield return new WaitForSeconds(1.2f);
 
             _shieldExplosionEffect.Stop();
         }
         
-    }
+    }*/
 
 
-    public void ActivatePowerup(int powerupID)
+    public void ActivatePowerup(int powerupID, bool isCorrupted, float dur_CRPT)
     {
-        StartCoroutine(PowerDownRoutine(powerupID));
+        if(isCorrupted == false)
+            StartCoroutine(PowerDownRoutine(powerupID));
+        else
+            StartCoroutine(PowerDownRoutine_Corrupted(powerupID, dur_CRPT));
     }
 
     IEnumerator PowerDownRoutine(int powerupID)
@@ -705,10 +751,14 @@ public class Player : MonoBehaviour
                 break;
 
             case 2:
-                _shieldVisualizer?.SetActive(true);
+                _shieldObj.SetActive(true);
+                _shields.AdjustShieldStrength(ShieldStrength.Full);
+                _shieldLife = 3;
+
+               /* _shieldVisualizer?.SetActive(true);
                 _shieldLife = 3;
                 _shieldsLight.color = _fullShieldsCol;
-                StartCoroutine(PlayEnergyExplosion());
+                StartCoroutine(PlayEnergyExplosion());*/
                 break;
 
             case 3:
@@ -728,6 +778,58 @@ public class Player : MonoBehaviour
                 Debug.Log("Wrong Powerup ID");
                 break;
         }
+    }
+    IEnumerator PowerDownRoutine_Corrupted(int powerupID, float dur_CRPT)
+    {
+        if (_spawnManager != null)
+            _spawnManager.AddEnemyCorruption(powerupID, dur_CRPT);
+
+        //may not need switch case if just communicating with SpawnManager
+
+        #region switch case
+        /*switch (powerupID)
+        {
+            case 0:
+                
+                *//*_isTripleShotEnabled = true;
+                yield return new WaitForSeconds(_tripleShotPowerDownTime);
+                _isTripleShotEnabled = false;*//*
+                break;
+
+            case 1:
+                *//*_isSpeedEnabled = true;
+                yield return new WaitForSeconds(_speedPowerDownTime);
+                _isSpeedEnabled = false;*//*
+                break;
+
+            case 2:
+                *//*_shieldVisualizer?.SetActive(true);
+                _shieldLife = 3;
+                _shieldsLight.color = _fullShieldsCol;
+                StartCoroutine(PlayEnergyExplosion());*//*
+                break;
+
+            case 3:
+                *//*_ammoCount = 15;
+                UpdateAmmoCountContainer();*//*
+                break;
+
+            case 4:
+                //StartCoroutine(RegainHealthRoutine());
+                break;
+
+            case 5:
+                //StartCoroutine(ReadyMissilesRoutine());
+                break;
+
+            default:
+                Debug.Log("Wrong Powerup ID");
+                break;
+        }
+       */
+        #endregion
+
+        yield return null;
     }
     public IEnumerator RegainHealthRoutine()
     {
@@ -774,6 +876,7 @@ public class Player : MonoBehaviour
                 _controlPoint, _timeToMove, particles));
             yield return new WaitForSeconds(0.33f); // delay before next one takes off
         }
+        
         yield return new WaitForSeconds(0.5f);  //  delay for animation before being vulnerable
         _isInvulnerable = false;
     }
@@ -798,6 +901,7 @@ public class Player : MonoBehaviour
             List_Engines[0].SetActive(false);
             List_Engines[1].SetActive(false);
         }
+        _healParticles.Play();
     }
     IEnumerator MoveShipUI_Routine(Transform t_ShipUI, SpriteRenderer sprite, int spriteIndex, 
         Vector3 startPos, Vector3 endPos, Vector3 controlPoint, float timeToMove, ParticleSystem particles)
@@ -1079,6 +1183,11 @@ public class Player : MonoBehaviour
     public bool CanMissilesHurtPlayer()
     {
         return _canMissilesHurtSelf;
+    }
+
+    public string GetMyPlayerID()
+    {
+        return playerID;
     }
 
     

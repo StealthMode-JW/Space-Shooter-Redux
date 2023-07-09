@@ -41,7 +41,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 445594765077606165}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 03614db416e383248bce07d6bde8454c, type: 3}
   m_Name: 
@@ -56,7 +56,10 @@ MonoBehaviour:
     anyChildObjects:
     - isDestroyed: 0
       indexOfChild: 0
-      childObject: {fileID: 0}
+      childObject: {fileID: 2128862950719283578}
+    - isDestroyed: 0
+      indexOfChild: 1
+      childObject: {fileID: 1737478945852287194}
     ifALL_OfThese_ChildObjects: 0
     allChildObjects: []
 --- !u!1 &1737478945852287194
@@ -206,9 +209,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fd07dd20e796b64badbdb897f7fba41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 8
-  _timeTilCanHitPlayer: 0.5
-  _canHitPlayer: 0
+  laserID: 
+  myCreatorID: 
+  _speed: 20
 --- !u!1 &2128862950719283578
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,9 +359,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fd07dd20e796b64badbdb897f7fba41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 8
-  _timeTilCanHitPlayer: 0.5
-  _canHitPlayer: 0
+  laserID: 
+  myCreatorID: 
+  _speed: 20
 --- !u!1 &4644666323091897511
 GameObject:
   m_ObjectHideFlags: 0

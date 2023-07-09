@@ -230,6 +230,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fd07dd20e796b64badbdb897f7fba41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 8
-  _timeTilCanHitPlayer: 0.5
-  _canHitPlayer: 0
+  laserID: 
+  myCreatorID: 
+  _speed: 20

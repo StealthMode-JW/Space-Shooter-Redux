@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6407008294892893907}
+  - component: {fileID: 5379369615828656038}
   - component: {fileID: 4463467970963041339}
   - component: {fileID: 584681700008605255}
   - component: {fileID: 2649124638486170068}
-  - component: {fileID: 5379369615828656038}
   - component: {fileID: 3269518758354774594}
   - component: {fileID: 7520664186358192999}
   m_Layer: 0
@@ -37,6 +37,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5379369615828656038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7430416504129597941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd3323a9cbbc76c418e3262c2571fe19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _speed: 3
+  _powerupID: 5
+  _isCorrupted: 0
+  _durationOfCorruption: 5
+  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _audioSource: {fileID: 3269518758354774594}
+  List_PowerupClips:
+  - {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _transCam: {fileID: 1434707106345860822, guid: 2cb032203a764c147b997d60583fdd1c, type: 3}
+  lastTime: 0
 --- !u!212 &4463467970963041339
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -136,25 +158,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &5379369615828656038
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7430416504129597941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bd3323a9cbbc76c418e3262c2571fe19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _speed: 3
-  _powerupID: 5
-  _clip: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
-  _audioSource: {fileID: 3269518758354774594}
-  List_PowerupClips:
-  - {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
-  _transCam: {fileID: 1434707106345860822, guid: 2cb032203a764c147b997d60583fdd1c, type: 3}
 --- !u!82 &3269518758354774594
 AudioSource:
   m_ObjectHideFlags: 0
