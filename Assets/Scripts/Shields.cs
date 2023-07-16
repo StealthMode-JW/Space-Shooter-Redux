@@ -91,7 +91,28 @@ public class Shields : MonoBehaviour
 
         _isInvulnerable = false;
     }
+    public int ReduceNumberOfShields(int minusVal)
+    {
+        var currStrength = GetShieldStrength();
+        var newStrength = currStrength - minusVal;
+        // Enemy can take more damage 
+        var adjustedStrength = newStrength;
+        if (newStrength < 0)
+            newStrength = 0;
+        ShieldStrength shieldStrength = GetShieldStrength_ByInt(newStrength);
+        AdjustShieldStrength(shieldStrength);
+        return adjustedStrength;
+    }
 
+    public void GainNumberOfShieldStrength(int plusVal)
+    {
+        var currStrength = GetShieldStrength();
+        var newStrength = currStrength + plusVal;
+        if(newStrength > 3)
+            newStrength = 3;
+        ShieldStrength shieldStrength = GetShieldStrength_ByInt(newStrength);
+        AdjustShieldStrength(shieldStrength);
+    }
 
     public void AdjustShieldStrength(ShieldStrength newShieldStrength)
     {

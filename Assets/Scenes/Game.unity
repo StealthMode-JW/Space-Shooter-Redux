@@ -6499,9 +6499,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 175520242}
+  - component: {fileID: 175520243}
   - component: {fileID: 175520241}
   - component: {fileID: 175520244}
-  - component: {fileID: 175520243}
   - component: {fileID: 175520247}
   - component: {fileID: 175520245}
   - component: {fileID: 175520246}
@@ -126688,10 +126688,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6928715428927127693}
+  - component: {fileID: 6928715428927127697}
   - component: {fileID: 6928715428927127692}
   - component: {fileID: 4460217030098070391}
   - component: {fileID: 528091132}
-  - component: {fileID: 6928715428927127697}
   - component: {fileID: 6928715428927127698}
   m_Layer: 0
   m_Name: Shields

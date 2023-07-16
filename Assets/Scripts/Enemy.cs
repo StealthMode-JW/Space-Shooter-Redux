@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 //using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -117,7 +118,8 @@ public class Enemy : MonoBehaviour
     [SerializeField, ReadOnly] float _timeLeft_SpeedBoost_CRPT = 0.0f;
     [Space(5)]
     [SerializeField, ReadOnly] bool _hasShields_CRPT;                    //    int = 2
-    [SerializeField] GameObject _shieldsPrefab;
+    [SerializeField] GameObject _shieldObj;
+    [SerializeField] Shields _shields;
     [SerializeField, ReadOnly] float _timeLeft_Shields_CRPT = 0.0f;
     //[Space(5)]
     /*[SerializeField, ReadOnly] bool _hasAmmo_CRPT = false;          //    int = 3
@@ -713,7 +715,7 @@ public class Enemy : MonoBehaviour
             if (_player != null)
                 _player.Damage(gameObject, 1);
 
-            DestroySelf();
+            DamageSelf();
         }
         else if (other.tag == "Laser")
         {
@@ -725,7 +727,7 @@ public class Enemy : MonoBehaviour
             else
             {
                 Destroy(other.gameObject);
-                DestroySelf();
+                DamageSelf();
                 GameObject laserGO = other.gameObject;
             }
             
@@ -735,23 +737,54 @@ public class Enemy : MonoBehaviour
         else if(other.tag == "Asteroid")
         {
             //Destroy(other.gameObject);        ! Asteroid will destroy itself
-            DestroySelf();
+            DamageSelf();
         }
         else if (other.tag == "Missile")
         {
             //Destroy(other.gameObject);          //  Missile will detach its particle effect
-            DestroySelf();
+            DamageSelf();
         }
         else if (other.tag == "Explosion")
         {
+            DamageSelf();
+        }
+    }
+
+    void DamageSelf()
+    {
+        if (_hasShields_CRPT)
+        {
+            //  this value can change if certain weapons do more damage
+            var reducedlife = _shields.ReduceNumberOfShields(1);
+            if (reducedlife < 0)
+                DestroySelf();
+            else if (reducedlife == 0)
+            {
+                _hasShields_CRPT = false;
+                _shieldObj.SetActive(false);
+            }
+                
+            else if(reducedlife > 0)
+            {
+                _hasShields_CRPT = true;
+                _shieldObj.SetActive(true);
+            }
+        }
+            
+        else
+        {
             DestroySelf();
         }
+
+
+        DestroySelf();
     }
 
 
     //  When Enemy dies...
     public void DestroySelf()
     {
+        _shieldObj?.SetActive(false);
         _isDead = true;
         if(_player != null)
         {
@@ -841,8 +874,7 @@ public class Enemy : MonoBehaviour
                 _timeLeft_SpeedBoost_CRPT += durationAdded;
                 break;
             case 2:
-                _hasShields_CRPT = true;
-                _timeLeft_Shields_CRPT += durationAdded;
+                ActivateShields(durationAdded);
                 break;
             default:
                 Debug.LogWarning("ENEMY: GainCorruption() " +
@@ -892,12 +924,26 @@ public class Enemy : MonoBehaviour
                 {
                     _timeLeft_Shields_CRPT = 0.0f;
                     _hasShields_CRPT = false;
+                    _shields.AdjustShieldStrength(Shields.ShieldStrength.None);
                 }
             }
         //  Add other powers.
 
 
 
+    }
+
+    public void ActivateShields(float durationAdded)
+    {
+        
+        if(_shields != null)
+        {
+            _shieldObj.SetActive(true);
+            _hasShields_CRPT = true;
+            _timeLeft_Shields_CRPT += durationAdded;
+            //_shields.AdjustShieldStrength(Shields.ShieldStrength.Full);
+            _shields.GainNumberOfShieldStrength(1);
+        }
     }
 
 

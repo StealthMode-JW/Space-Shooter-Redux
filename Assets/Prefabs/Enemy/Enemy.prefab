@@ -137,10 +137,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1136753183455689589}
+  - component: {fileID: 8084919744842714840}
   - component: {fileID: 1136753183455689588}
   - component: {fileID: 5910108953009148047}
   - component: {fileID: 8061780910924233732}
-  - component: {fileID: 8084919744842714840}
   - component: {fileID: 1190195599091164705}
   m_Layer: 0
   m_Name: Shields 1
@@ -166,6 +166,38 @@ Transform:
   m_Father: {fileID: 6260082643037712545}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8084919744842714840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1136753183455689591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66b7ba135328f634aa745c55109a6714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isShieldEnabled: 0
+  _shieldStrength: 0
+  _shieldObj: {fileID: 1136753183455689591}
+  _shieldSprite: {fileID: 1136753183455689588}
+  _shieldExplosionEffect: {fileID: 8048183147903586772}
+  _shieldLife: 0
+  _isInvulnerable: 0
+  _invulnerabilityTime: 1.5
+  _shieldsLight: {fileID: 8061780909411883317}
+  _fullShieldsCol: {r: 0, g: 0, b: 1, a: 1}
+  _halfShieldsCol: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _criticalShieldsCol: {r: 1, g: 0, b: 0, a: 1}
+  _steadyPulseSpeed: 5
+  _transitionPulseSpeed: 30
+  _colorTransitionSpeed: 3
+  _minPulseIntensity: 0
+  _maxPulseIntensity: 0.75
+  _audioSource_Shields: {fileID: 1190195599091164705}
+  _audioShields_StartTime: 0.5
+  _shieldDamagedSound: {fileID: 8300000, guid: 2d293b3ec21104d1086224438ebd1054, type: 3}
 --- !u!212 &1136753183455689588
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -334,38 +366,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &8084919744842714840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1136753183455689591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66b7ba135328f634aa745c55109a6714, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isShieldEnabled: 0
-  _shieldStrength: 0
-  _shieldObj: {fileID: 1136753183455689591}
-  _shieldSprite: {fileID: 1136753183455689588}
-  _shieldExplosionEffect: {fileID: 8048183147903586772}
-  _shieldLife: 0
-  _isInvulnerable: 0
-  _invulnerabilityTime: 1.5
-  _shieldsLight: {fileID: 8061780909411883317}
-  _fullShieldsCol: {r: 0, g: 0, b: 1, a: 1}
-  _halfShieldsCol: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _criticalShieldsCol: {r: 1, g: 0, b: 0, a: 1}
-  _steadyPulseSpeed: 5
-  _transitionPulseSpeed: 30
-  _colorTransitionSpeed: 3
-  _minPulseIntensity: 0
-  _maxPulseIntensity: 0.75
-  _audioSource_Shields: {fileID: 1190195599091164705}
-  _audioShields_StartTime: 0.5
-  _shieldDamagedSound: {fileID: 8300000, guid: 2d293b3ec21104d1086224438ebd1054, type: 3}
 --- !u!82 &1190195599091164705
 AudioSource:
   m_ObjectHideFlags: 0
@@ -586,7 +586,8 @@ MonoBehaviour:
   _hasSpeedBoost_CRPT: 0
   _timeLeft_SpeedBoost_CRPT: 0
   _hasShields_CRPT: 0
-  _shieldsPrefab: {fileID: 3821411754989437827, guid: a0257fe20bab2a143b2857826aa53996, type: 3}
+  _shieldObj: {fileID: 1136753183455689591}
+  _shields: {fileID: 8084919744842714840}
   _timeLeft_Shields_CRPT: 0
   _dive_Target: {x: 0, y: 0, z: 0}
   _flankLt_Target: {x: 0, y: 0, z: 0}
